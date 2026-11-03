@@ -141,7 +141,7 @@ async function determineRole(session){
  if(session.user.is_anonymous){enterRole('work');await loadItems();return;}
  await db.auth.signOut();showGate();
 }
-$('workEntry').addEventListener('click',async()=>{showError('');const {data,error}=await db.auth.signInAnonymously();if(error){showError('No se pudo iniciar el acceso de trabajo. Activa Anonymous Sign-Ins en Supabase.');return;}enterRole('work');});
+$('workEntry').addEventListener('click',async()=>{showError('');const {data,error}=await db.auth.signInAnonymously();if(error){console.error('Error al iniciar sesión de trabajo en Supabase:',error);showError('Error de acceso: '+(error.message||'No se ha podido iniciar sesión.')+(error.code?' ('+error.code+')':''));return;}enterRole('work');});
 $('adminEntry').addEventListener('click',async()=>{const {data:{session}}=await db.auth.getSession();if(session&&session.user.is_anonymous)await db.auth.signOut();$('pinArea').hidden=false;$('gateError').textContent='';setTimeout(()=>$('adminEmail').focus(),0);});
 $('gateTitle').textContent='Albaranes de Butano';
 $('pinArea').innerHTML='<label for="adminEmail" style="text-align:left">Correo de administrador</label><input id="adminEmail" type="email" autocomplete="username" placeholder="Tu correo" value="calvovizcaino@gmail.com"><label for="gatePin" style="text-align:left">Contraseña</label><input id="gatePin" type="password" autocomplete="current-password" placeholder="Contraseña"><button type="button" id="confirmAdmin" class="gate-primary">Acceder</button>';
