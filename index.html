@@ -168,7 +168,7 @@ $('exportBtn').addEventListener('click',()=>{const rows=[['Fecha de recepción',
 $('restoreBtn').addEventListener('click',()=>$('restoreFile').click());
 $('restoreFile').addEventListener('change',async e=>{const file=e.target.files&&e.target.files[0];if(!file)return;try{const parsed=JSON.parse(await file.text()),incoming=Array.isArray(parsed)?parsed:parsed.items;if(!Array.isArray(incoming)||!incoming.every(x=>x&&x.number!==undefined&&x.date&&Number.isFinite(Number(x.amount))))throw new Error('Formato no válido');if(!confirm('Importar esta copia añadirá los albaranes a Supabase. ¿Continuar?'))return;for(const x of incoming){const {error}=await db.from('albaranes').insert({fecha:String(x.date),numero:String(x.number),importe:Math.round(Number(x.amount)*100)/100,pagado:Boolean(x.paid),pagado_en:x.paid?(x.paidDate||new Date().toISOString()):null});if(error)throw error;}await loadItems();alert('Copia importada. Revisa posibles duplicados.');}catch(err){alert('No se pudo importar la copia. Comprueba que has entrado como administrador.');}finally{e.target.value='';}});
 $('date').value=new Date().toISOString().slice(0,10);showGate();boot();
-if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));
+if('serviceWorker'in navigator)window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./service-worker.js',{updateViaCache:'none'});await reg.update();}catch(e){}});
 </script>
 </body>
 </html>
