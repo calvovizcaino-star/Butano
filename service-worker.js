@@ -1,4 +1,4 @@
-const CACHE_NAME = 'albaranes-butano-v4';
+const CACHE_NAME = 'albaranes-butano-v5';
 const FILES_TO_CACHE = [
   './',
   './index.html',
